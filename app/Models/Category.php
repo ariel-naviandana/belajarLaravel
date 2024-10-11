@@ -10,7 +10,7 @@ class Category extends Model
 {
     use HasFactory;
     protected $primaryKey = 'id';
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'color'];
     public function posts():HasMany
     {
         return $this->hasMany(    Post::class, 'category_id');

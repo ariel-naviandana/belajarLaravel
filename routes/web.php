@@ -15,21 +15,27 @@ Route::get('/about', function () {
 });
 
 Route::get('/posts', function () {
-    return view('posts', ['title' => 'Blog', 'posts'=> Post::all()]);
+    // $posts = Post::with(['author', 'category'])->latest()->get();
+    // $posts = Post::latest();
+    // if(request('search')){
+    //     $posts->where('title', 'like', '%'.request('search').'%');
+    // }
+    return view('posts', ['title' => 'Blog', 'posts'=> Post::filter(request(['search','category', 'author']))->latest()->paginate(9)->withQueryString()]);
 });
 
 Route::get('/posts/{post:slug}', function (Post $post) {
-        // $post = Post::find($slug);
-
+    // $post = Post::find($slug);
     return view('post', ['title' => 'Single Post', 'post' => $post]);
 });
 
-Route::get('/authors/{user}', function (User $user) {
-    return view('posts', ['title' => 'Articles by '.$user->name, 'posts' => $user->posts]);
+Route::get('/authors/{user:username}', function (User $user) {
+    // $posts = $user->posts->load('category', 'author');
+    return view('posts', ['title' => count($user->posts) . ' Articles by '.$user->name, 'posts' => $user->posts]);
 });
 
-Route::get('/categories/{category}', function (Category $category) {
-    return view('posts', ['title' => 'Category '.$category->name, 'posts' => $category->posts]);
+Route::get('/categories/{category:slug}', function (Category $category) {
+    // $posts = $category->posts->load('category', 'author');
+    return view('posts', ['title' => count($category->posts) . ' Article in '.$category->name, 'posts' => $category->posts]);
 });
 
 Route::get('/contact', function () {
